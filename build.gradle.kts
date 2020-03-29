@@ -13,6 +13,7 @@ buildscript {
     }
 }
 plugins {
+    java
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.3.41"
     id("org.springframework.boot") version "2.2.4.RELEASE"
@@ -40,18 +41,22 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
-
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
     implementation("org.flywaydb:flyway-core")
+
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.google.firebase:firebase-admin:6.8.1")
-    runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
+
+    // DBは一つのみ
+    runtimeOnly("com.h2database:h2")
+//    runtimeOnly("org.postgresql:postgresql")
 
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
@@ -59,5 +64,14 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = "jp.co.glantz.admin.AppKt"
+    mainClassName = "rootpackage.Application"
+}
+
+tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "1.8"
+        }
+    }
 }
